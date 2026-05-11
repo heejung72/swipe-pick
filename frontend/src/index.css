@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+  body {
+    @apply font-sans bg-neutral-950 text-white min-h-screen;
+    overscroll-behavior: none;
+    user-select: none;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply font-medium py-3 px-6 rounded-2xl transition-all duration-200
+           active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-pink {
+    @apply btn bg-pink-500 hover:bg-pink-600 text-white shadow-lg shadow-pink-500/30;
+  }
+  .btn-outline {
+    @apply btn border border-white/20 text-white/80 hover:bg-white/10;
+  }
+  .card-dark {
+    @apply bg-white/5 border border-white/10 rounded-2xl;
+  }
+}
+
+/* 스와이프 카드 */
+.swipe-card {
+  touch-action: none;
+  will-change: transform;
+  cursor: grab;
+}
+.swipe-card:active { cursor: grabbing; }
+
+/* 스크롤바 */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 9999px; }
