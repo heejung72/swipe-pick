@@ -27,7 +27,7 @@ export default function Create() {
   const [copied, setCopied] = useState(false)
 
   const handleFiles = async (e) => {
-    const selected = Array.from(e.target.files).slice(0, 5)
+    const selected = Array.from(e.target.files).slice(0, 20)
     setLoading(true)
     try {
       const converted = await Promise.all(selected.map(convertIfHeic))
@@ -133,7 +133,7 @@ export default function Create() {
     <div className="min-h-screen flex flex-col p-6 max-w-sm mx-auto">
       <div className="mb-8 animate-fade-in">
         <h2 className="text-xl font-semibold">사진 올리기</h2>
-        <p className="text-white/40 text-sm mt-1">최대 5장, 친구들이 스와이프로 골라줄 거예요</p>
+        <p className="text-white/40 text-sm mt-1">최대 20장, 친구들이 스와이프로 골라줄 거예요</p>
       </div>
 
       <div className="mb-5">
@@ -159,7 +159,7 @@ export default function Create() {
           >
             <span className="text-4xl">📸</span>
             <span className="text-white/40 text-sm">사진을 선택해주세요</span>
-            <span className="text-white/20 text-xs">최대 5장</span>
+            <span className="text-white/20 text-xs">최대 20장</span>
           </button>
         ) : (
           <div className="space-y-3">
@@ -174,7 +174,7 @@ export default function Create() {
                   >×</button>
                 </div>
               ))}
-              {previews.length < 5 && (
+              {previews.length < 20 && (
                 <button
                   onClick={() => fileRef.current.click()}
                   className="aspect-square border border-dashed border-white/10 rounded-xl
