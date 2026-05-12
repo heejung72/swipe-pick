@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="text-center mb-12 animate-fade-in">
-        <div className="text-6xl mb-4">📸</div>
+        <img src="/logo.svg" alt="스와이프 픽" className="w-20 h-20 mb-4 mx-auto" />
         <h1 className="text-3xl font-semibold tracking-tight">스와이프 픽</h1>
         <p className="text-white/40 mt-2 text-sm">친구들이 골라주는 나의 베스트컷</p>
       </div>

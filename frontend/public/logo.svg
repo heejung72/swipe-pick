@@ -1,0 +1,43 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="frontCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2d2d2d"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <filter id="heartGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Back card -->
+  <g transform="rotate(-7 57 74)">
+    <rect x="22" y="30" width="70" height="88" rx="10"
+          fill="#141414" stroke="#282828" stroke-width="1.5"/>
+  </g>
+
+  <!-- Front card + heart (rotated together) -->
+  <g transform="rotate(8 65 66)">
+    <rect x="30" y="22" width="70" height="88" rx="10"
+          fill="url(#frontCard)" stroke="#383838" stroke-width="0.5"/>
+    <!-- Pink glow behind heart -->
+    <ellipse cx="65" cy="62" rx="22" ry="17" fill="#ec4899" opacity="0.07"/>
+    <!-- Heart -->
+    <path d="M65 79
+             C65 79 44 65 44 53
+             C44 43 53 39 60 46
+             C62 48 65 53 65 53
+             C65 53 68 48 70 46
+             C77 39 86 43 86 53
+             C86 65 65 79 65 79Z"
+          fill="#ec4899" filter="url(#heartGlow)"/>
+  </g>
+
+  <!-- Motion lines (swipe right) -->
+  <line x1="108" y1="46" x2="130" y2="38" stroke="#ec4899" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <line x1="111" y1="59" x2="135" y2="56" stroke="#ec4899" stroke-width="2"   stroke-linecap="round" opacity="0.6"/>
+  <line x1="110" y1="72" x2="132" y2="72" stroke="#ec4899" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+</svg>
