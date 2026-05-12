@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createRoom } from '../utils/api.js'
 import { shareSwipeLink } from '../utils/kakao.js'
+import RabbitGame from '../components/RabbitGame.jsx'
 const isHeic = (file) =>
   file.type === 'image/heic' ||
   file.type === 'image/heif' ||
@@ -190,8 +191,25 @@ export default function Create() {
       {error && <p className="text-red-400 text-xs text-center mb-4">{error}</p>}
 
       <button onClick={handleCreate} disabled={loading} className="btn-pink w-full mt-auto">
-        {loading ? '업로드 중...' : '링크 만들기 →'}
+        링크 만들기 →
       </button>
+
+      {/* 로딩 중 미니게임 오버레이 */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/85 z-50 flex flex-col items-center justify-center gap-4 p-6">
+          <p className="text-white/60 text-sm">
+            {previews.length > 0 ? '업로드 중이에요...' : '변환 중이에요...'}
+          </p>
+          <p className="text-white/30 text-xs -mt-2">잠깐, 게임 한판!</p>
+          <RabbitGame />
+          <div className="flex gap-1.5 mt-1">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-pink-500/50 animate-bounce"
+                   style={{ animationDelay: `${i * 0.15}s` }} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
