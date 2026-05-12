@@ -3,6 +3,7 @@ backend/target/
 backend/uploads/
 backend/*.iml
 backend/.idea/
+backend/src/main/resources/application.properties
 *.class
 
 # Frontend
@@ -10,6 +11,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env
 frontend/.env.local
+frontend/.env.example
 
 # OS
 .DS_Store
