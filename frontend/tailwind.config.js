@@ -9,6 +9,7 @@ export default {
         'slide-up': 'slideUp 0.35s ease-out',
         'pop-in': 'popIn 0.3s cubic-bezier(0.34,1.56,0.64,1)',
         'fade-in': 'fadeIn 0.3s ease-out',
+        'icon-float': 'iconFloat 3s ease-in-out infinite',
       },
       keyframes: {
         heartbeat: {
@@ -31,6 +32,10 @@ export default {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        iconFloat: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-8px)' },
         },
       },
     },

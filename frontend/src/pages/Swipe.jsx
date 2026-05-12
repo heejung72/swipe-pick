@@ -15,6 +15,9 @@ export default function Swipe() {
   const [photos, setPhotos] = useState([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [done, setDone] = useState(false)
+  const [heldPhotos, setHeldPhotos] = useState([])
+  const [isHoldRound, setIsHoldRound] = useState(false)
+  const [showHoldReview, setShowHoldReview] = useState(false)
   const [heartCount, setHeartCount] = useState(0)
   const [isBeating, setIsBeating] = useState(false)
   const [floatingHearts, setFloatingHearts] = useState([])
@@ -68,15 +71,41 @@ export default function Swipe() {
   const handleSwipe = useCallback((direction) => {
     if (currentIdx >= photos.length) return
     const photo = photos[currentIdx]
+    const next = currentIdx + 1
+
+    if (direction === 'HOLD') {
+      const newHeld = [...heldPhotos, photo]
+      setHeldPhotos(newHeld)
+      setCurrentIdx(next)
+      if (next >= photos.length) {
+        setShowHoldReview(true)
+      }
+      return
+    }
+
     send('/swipe', { roomCode: code, photoId: photo.id, direction, voterName })
     triggerBeat(direction)
     if (direction === 'BEST') {
       confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 }, colors: ['#ec4899','#f9a8d4','#fff'] })
     }
-    const next = currentIdx + 1
+
     setCurrentIdx(next)
-    if (next >= photos.length) setDone(true)
-  }, [currentIdx, photos, code, voterName, send, triggerBeat])
+    if (next >= photos.length) {
+      if (heldPhotos.length > 0 && !isHoldRound) {
+        setShowHoldReview(true)
+      } else {
+        setDone(true)
+      }
+    }
+  }, [currentIdx, photos, code, voterName, send, triggerBeat, heldPhotos, isHoldRound])
+
+  const startHoldRound = () => {
+    setPhotos(heldPhotos)
+    setHeldPhotos([])
+    setCurrentIdx(0)
+    setIsHoldRound(true)
+    setShowHoldReview(false)
+  }
 
   const handleComment = () => {
     if (!commentText.trim() || currentIdx >= photos.length) return
@@ -94,6 +123,26 @@ export default function Swipe() {
     navigator.clipboard.writeText(shareUrl)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  // 보류 사진 재결정 화면
+  if (showHoldReview) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <div className="text-5xl mb-4 animate-pop-in">⏸</div>
+        <h2 className="text-xl font-semibold mb-2">보류한 사진이 있어요</h2>
+        <p className="text-white/40 text-sm mb-2">{heldPhotos.length}장을 아직 결정 못 했어요</p>
+        <p className="text-white/30 text-xs mb-8">이번엔 BEST 또는 PASS만 선택할 수 있어요</p>
+        <div className="space-y-3 w-full max-w-xs">
+          <button onClick={startHoldRound} className="btn-pink w-full">
+            다시 결정하러 가기 →
+          </button>
+          <button onClick={() => setDone(true)} className="btn-outline w-full text-sm">
+            그냥 넘어갈게
+          </button>
+        </div>
+      </div>
+    )
   }
 
   // 완료 화면
@@ -130,7 +179,10 @@ export default function Swipe() {
       {/* 상단 */}
       <div className="flex items-center justify-between px-5 pt-5 pb-3">
         <div>
-          <p className="text-white/30 text-xs">{currentIdx + 1} / {photos.length}</p>
+          <p className="text-white/30 text-xs">
+            {isHoldRound && <span className="text-yellow-400/70 mr-1">⏸ 보류 재결정</span>}
+            {currentIdx + 1} / {photos.length}
+          </p>
           <div className="flex gap-1 mt-1">
             {photos.map((_, i) => (
               <div key={i} className={`h-0.5 w-6 rounded-full transition-all ${
@@ -140,7 +192,6 @@ export default function Swipe() {
           </div>
         </div>
 
-        {/* 하트 카운터 + 심박 */}
         <div className="relative flex items-center gap-1.5">
           <span className={`text-2xl transition-transform ${isBeating ? 'animate-heartbeat' : ''}`}>💗</span>
           <span className="text-white/60 text-sm">{heartCount}</span>
@@ -168,19 +219,19 @@ export default function Swipe() {
                 index={idx}
                 isTop={idx === 0}
                 onSwipe={handleSwipe}
+                disableHold={isHoldRound}
               />
             )
           })}
         </div>
       </div>
 
-      {/* 댓글 팝업 - 흰 말풍선 */}
+      {/* 댓글 팝업 */}
       {showComment && (
         <div className="mx-4 mb-3 animate-slide-up">
           <div className="bg-white rounded-2xl rounded-bl-sm shadow-xl p-4">
-            {/* 프리셋 버튼 */}
-            <div className="flex gap-2 mb-3">
-              {['누구세요? 👀', '와 ㄹㅈㄷ 🔥', '진짜 예쁘다 💗', '보정 좀 더해 💇🏻‍♀️'].map(preset => (
+            <div className="flex gap-2 mb-3 flex-wrap">
+              {['이게 첫장이지! 📸', '분위기 완벽 ✨', '무드 넘쳐 💗', '감성적이다 🌿'].map(preset => (
                 <button
                   key={preset}
                   onClick={() => setCommentText(preset)}
@@ -194,7 +245,6 @@ export default function Swipe() {
                 </button>
               ))}
             </div>
-            {/* 직접 입력 */}
             <div className="flex items-center gap-2 border-t border-gray-100 pt-3">
               <input
                 type="text"
@@ -214,7 +264,6 @@ export default function Swipe() {
               </button>
             </div>
           </div>
-          {/* 말풍선 꼬리 */}
           <div className="w-3 h-3 bg-white ml-4" style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }} />
         </div>
       )}
@@ -232,7 +281,7 @@ export default function Swipe() {
 
       {/* 하단 버튼 */}
       <div className="px-4 pb-6 flex items-center gap-3">
-        {/* WORST */}
+        {/* PASS */}
         <button
           onClick={() => handleSwipe('WORST')}
           className="flex-1 h-14 bg-white/5 border border-white/10 rounded-2xl
@@ -241,6 +290,18 @@ export default function Swipe() {
           <span className="text-xl">👎</span>
           <span className="text-white/50 text-sm">PASS</span>
         </button>
+
+        {/* 보류 (첫 라운드만) */}
+        {!isHoldRound && (
+          <button
+            onClick={() => handleSwipe('HOLD')}
+            className="w-14 h-14 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl
+                       flex flex-col items-center justify-center active:scale-95 transition-all"
+          >
+            <span className="text-lg">⏸</span>
+            <span className="text-yellow-400/60 text-[10px]">보류</span>
+          </button>
+        )}
 
         {/* 댓글 */}
         <button
@@ -262,7 +323,7 @@ export default function Swipe() {
         </button>
       </div>
 
-      {/* 호스트 전용: 공유 + 결과 */}
+      {/* 호스트 전용 */}
       {isHost && (
         <div className="px-4 pb-5 flex gap-2">
           <button onClick={copyLink} className="flex-1 btn-outline text-xs py-2">
@@ -274,7 +335,6 @@ export default function Swipe() {
         </div>
       )}
 
-      {/* 실시간 투표자 수 */}
       <div className="pb-4 text-center text-white/20 text-xs">
         {totalVoters > 0 && `${totalVoters}명 참여 중`}
       </div>

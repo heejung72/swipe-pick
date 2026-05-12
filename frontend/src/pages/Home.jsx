@@ -5,9 +5,9 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="text-center mb-12 animate-fade-in">
-        <div className="text-6xl mb-4">💘</div>
+        <div className="text-6xl mb-4">📸</div>
         <h1 className="text-3xl font-semibold tracking-tight">스와이프 픽</h1>
-        <p className="text-white/40 mt-2 text-sm">친구들이 직접 뽑는 나의 베스트컷</p>
+        <p className="text-white/40 mt-2 text-sm">친구들이 골라주는 나의 인스타 무드</p>
       </div>
 
       <div className="w-full max-w-xs space-y-3 animate-slide-up">
@@ -19,17 +19,32 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="mt-16 grid grid-cols-3 gap-6 text-center opacity-50">
+      <div className="mt-16 grid grid-cols-3 gap-6 text-center">
         {[
-          { icon: '📸', text: '사진 업로드' },
-          { icon: '👆', text: '스와이프 투표' },
-          { icon: '✨', text: '베스트컷 공개' },
+          { icon: '📸', text: '사진 업로드', delay: '0s' },
+          { icon: '👆', text: '스와이프 투표', delay: '0.5s' },
+          { icon: '✨', text: '무드컷 공개', delay: '1s' },
         ].map(f => (
           <div key={f.text}>
-            <div className="text-2xl mb-1">{f.icon}</div>
+            <div
+              className="text-2xl mb-1 animate-icon-float"
+              style={{ animationDelay: f.delay }}
+            >
+              {f.icon}
+            </div>
             <p className="text-xs text-white/50">{f.text}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-10 max-w-xs text-center animate-fade-in">
+        <div className="card-dark px-5 py-4 rounded-2xl">
+          <p className="text-white/70 text-sm font-medium mb-1">얼굴 평가 말고, 인스타 무드 골라줘 🌸</p>
+          <p className="text-white/35 text-xs leading-relaxed">
+            세상 모든 여자는 아름다워.<br />
+            나쁜 말은 넣어두고, 진짜 분위기 있는 사진을 찾아줘!
+          </p>
+        </div>
       </div>
     </div>
   )
