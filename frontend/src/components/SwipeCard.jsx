@@ -2,6 +2,7 @@ import { useRef, useState, useCallback } from 'react'
 
 const SWIPE_THRESHOLD = 80
 const HOLD_THRESHOLD = 80
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export default function SwipeCard({ photo, onSwipe, index, isTop, disableHold }) {
   const cardRef = useRef(null)
@@ -67,7 +68,7 @@ export default function SwipeCard({ photo, onSwipe, index, isTop, disableHold })
       <div className="absolute inset-0 rounded-3xl bg-black" />
 
       <img
-        src={photo.url}
+        src={photo.url?.startsWith('/') ? `${API_BASE}${photo.url}` : photo.url}
         alt=""
         className="absolute inset-0 w-full h-full object-contain rounded-3xl select-none pointer-events-none"
         draggable={false}

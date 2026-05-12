@@ -5,6 +5,9 @@ import { useWebSocket } from '../hooks/useWebSocket.js'
 import { shareResult } from '../utils/kakao.js'
 import confetti from 'canvas-confetti'
 
+const API_BASE = import.meta.env.VITE_API_URL || ''
+const imgUrl = (url) => url?.startsWith('/') ? `${API_BASE}${url}` : url
+
 export default function Result() {
   const { code } = useParams()
   const navigate = useNavigate()
@@ -75,7 +78,7 @@ export default function Result() {
             👑 베스트컷
           </div>
           <div className="rounded-2xl overflow-hidden border-2 border-pink-500/50 shadow-xl shadow-pink-500/20 relative aspect-[3/4] bg-black">
-            <img src={best.url} className="absolute inset-0 w-full h-full object-contain" />
+            <img src={imgUrl(best.url)} className="absolute inset-0 w-full h-full object-contain" />
             <div className="bg-neutral-900 px-4 py-3 flex items-center justify-between">
               <div>
                 <div className="text-pink-400 text-lg font-semibold">{best.survivalRate}%</div>
@@ -138,7 +141,7 @@ export default function Result() {
             <div key={photo.id} className="card-dark p-3 flex gap-3 items-center animate-slide-up">
               <span className="text-white/30 text-sm w-5">{idx + 1}</span>
               <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 relative bg-black">
-                <img src={photo.url} className="absolute inset-0 w-full h-full object-contain" />
+                <img src={imgUrl(photo.url)} className="absolute inset-0 w-full h-full object-contain" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
