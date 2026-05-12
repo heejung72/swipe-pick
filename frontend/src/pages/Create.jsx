@@ -28,16 +28,18 @@ export default function Create() {
   const [copied, setCopied] = useState(false)
 
   const handleFiles = async (e) => {
-    const selected = Array.from(e.target.files).slice(0, 20)
+    const selected = Array.from(e.target.files)
+    if (!selected.length) return
     setLoading(true)
     try {
       const converted = await Promise.all(selected.map(convertIfHeic))
-      setFiles(converted)
-      setPreviews(converted.map(f => URL.createObjectURL(f)))
+      setFiles(prev => [...prev, ...converted].slice(0, 20))
+      setPreviews(prev => [...prev, ...converted.map(f => URL.createObjectURL(f))].slice(0, 20))
     } catch {
       setError('사진 변환 중 오류가 났어요. 다시 시도해주세요.')
     } finally {
       setLoading(false)
+      e.target.value = ''
     }
   }
 
