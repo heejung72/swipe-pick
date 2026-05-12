@@ -143,7 +143,7 @@ export default function Create() {
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="예: 지은이"
+          placeholder="예 : 영크크"
           maxLength={10}
           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm
                      outline-none focus:border-pink-500/50 transition-colors placeholder-white/20"
