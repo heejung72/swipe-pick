@@ -16,13 +16,16 @@ public class FileService {
     @Value("${upload.dir:uploads}")
     private String uploadDir;
 
+    @Value("${app.base-url:}")
+    private String baseUrl;
+
     public String upload(MultipartFile file) throws IOException {
         Path dir = Paths.get(uploadDir).toAbsolutePath();
         Files.createDirectories(dir);
         String filename = UUID.randomUUID() + getExtension(file.getOriginalFilename());
         Files.copy(file.getInputStream(), dir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
         log.info("Saved: {}", filename);
-        return "/uploads/" + filename;
+        return baseUrl + "/uploads/" + filename;
     }
 
     private String getExtension(String filename) {
