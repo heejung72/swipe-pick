@@ -7,7 +7,7 @@ export default function Home() {
       <div className="text-center mb-12 animate-fade-in">
         <div className="text-6xl mb-4">📸</div>
         <h1 className="text-3xl font-semibold tracking-tight">스와이프 픽</h1>
-        <p className="text-white/40 mt-2 text-sm">친구들이 골라주는 나의 인스타 무드</p>
+        <p className="text-white/40 mt-2 text-sm">친구들이 골라주는 나의 베스트컷</p>
       </div>
 
       <div className="w-full max-w-xs space-y-3 animate-slide-up">
@@ -23,7 +23,7 @@ export default function Home() {
         {[
           { icon: '📸', text: '사진 업로드', delay: '0s' },
           { icon: '👆', text: '스와이프 투표', delay: '0.5s' },
-          { icon: '✨', text: '무드컷 공개', delay: '1s' },
+          { icon: '✨', text: '베스트컷 공개', delay: '1s' },
         ].map(f => (
           <div key={f.text}>
             <div
@@ -39,10 +39,9 @@ export default function Home() {
 
       <div className="mt-10 max-w-xs text-center animate-fade-in">
         <div className="card-dark px-5 py-4 rounded-2xl">
-          <p className="text-white/70 text-sm font-medium mb-1">얼굴 평가 말고, 인스타 무드 골라줘 🌸</p>
+          <p className="text-white/70 text-sm font-medium mb-1">"The best shot was always there.</p>
           <p className="text-white/35 text-xs leading-relaxed">
-            세상 모든 여자는 아름다워.<br />
-            나쁜 말은 넣어두고, 진짜 분위기 있는 사진을 찾아줘!
+            You just needed someone else to see it."
           </p>
         </div>
       </div>

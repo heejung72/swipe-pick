@@ -86,7 +86,7 @@ export default function Create() {
         <div className="text-center mb-8 animate-pop-in">
           <div className="text-5xl mb-3">🎉</div>
           <h2 className="text-xl font-semibold mb-1">링크가 만들어졌어요!</h2>
-          <p className="text-white/40 text-sm">친구들아, 인스타 첫장 골라줘! 📸</p>
+          <p className="text-white/40 text-sm">친구들아, 사진 골라줘! 📸</p>
         </div>
 
         {/* 링크 박스 */}

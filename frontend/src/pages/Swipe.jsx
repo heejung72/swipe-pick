@@ -231,7 +231,7 @@ export default function Swipe() {
         <div className="mx-4 mb-3 animate-slide-up">
           <div className="bg-white rounded-2xl rounded-bl-sm shadow-xl p-4">
             <div className="flex gap-2 mb-3 flex-wrap">
-              {['이게 첫장이지! 📸', '분위기 완벽 ✨', '무드 넘쳐 💗', '감성적이다 🌿'].map(preset => (
+              {['이게 베스트지! 📸', '분위기 완벽 ✨', '감성 넘쳐 💗', '감성적이다 🌿'].map(preset => (
                 <button
                   key={preset}
                   onClick={() => setCommentText(preset)}

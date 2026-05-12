@@ -41,7 +41,7 @@ export default function Result() {
 
   const copyScore = () => {
     if (!data) return
-    const text = `내 무드컷 ${data.beautyScore}점 받았어 💗 ${data.totalVoters}명이 골라줬어`
+    const text = `내 베스트컷 ${data.beautyScore}점 받았어 💗 ${data.totalVoters}명이 골라줬어`
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -62,7 +62,7 @@ export default function Result() {
     <div className="min-h-screen flex flex-col p-5 max-w-sm mx-auto">
       {/* 헤더 */}
       <div className="text-center mb-6 animate-pop-in">
-        <p className="text-white/40 text-xs mb-1">{data.hostName}의 무드컷</p>
+        <p className="text-white/40 text-xs mb-1">{data.hostName}의 베스트컷</p>
         <h2 className="text-2xl font-semibold">투표 결과 ✨</h2>
         <p className="text-white/30 text-xs mt-1">{data.totalVoters}명 참여 · {data.totalSwipes}번 스와이프</p>
       </div>
@@ -101,11 +101,11 @@ export default function Result() {
         </div>
       )}
 
-      {/* 무드 점수 */}
+      {/* 베스트컷 점수 */}
       <div className="card-dark p-5 mb-5 text-center animate-slide-up">
-        <p className="text-white/40 text-xs mb-2">인스타 무드 점수</p>
+        <p className="text-white/40 text-xs mb-2">베스트컷 점수</p>
         <div className="text-5xl font-semibold text-pink-400 mb-1">{beautyScore}<span className="text-2xl text-white/30">점</span></div>
-        <div className="text-white/30 text-xs">{beautyScore >= 80 ? '💗 완전 인스타 무드야!' : beautyScore >= 60 ? '✨ 분위기 맞네!' : '😄 다른 사진도 올려봐!'}</div>
+        <div className="text-white/30 text-xs">{beautyScore >= 80 ? '💗 완전 베스트컷이야!' : beautyScore >= 60 ? '✨ 분위기 맞네!' : '😄 다른 사진도 올려봐!'}</div>
         {/* 점수 바 */}
         <div className="mt-3 bg-white/5 rounded-full h-1.5 overflow-hidden">
           <div
