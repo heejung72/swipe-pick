@@ -32,8 +32,8 @@ export default function Create() {
     setLoading(true)
     try {
       const converted = await Promise.all(selected.map(convertIfHeic))
-      setFiles(prev => [...prev, ...converted].slice(0, 20))
-      setPreviews(prev => [...prev, ...converted.map(f => URL.createObjectURL(f))].slice(0, 20))
+      setFiles(prev => [...prev, ...converted].slice(0, 10))
+      setPreviews(prev => [...prev, ...converted.map(f => URL.createObjectURL(f))].slice(0, 10))
     } catch {
       setError('사진 변환 중 오류가 났어요. 다시 시도해주세요.')
     } finally {
@@ -135,7 +135,7 @@ export default function Create() {
     <div className="min-h-screen flex flex-col p-6 max-w-sm mx-auto">
       <div className="mb-8 animate-fade-in">
         <h2 className="text-xl font-semibold">사진 올리기</h2>
-        <p className="text-white/40 text-sm mt-1">최대 20장, 친구들이 스와이프로 골라줄 거예요</p>
+        <p className="text-white/40 text-sm mt-1">최대 10장, 친구들이 스와이프로 골라줄 거예요</p>
       </div>
 
       <div className="mb-5">
@@ -161,7 +161,7 @@ export default function Create() {
           >
             <span className="text-4xl">📸</span>
             <span className="text-white/40 text-sm">사진을 선택해주세요</span>
-            <span className="text-white/20 text-xs">최대 20장</span>
+            <span className="text-white/20 text-xs">최대 10장</span>
           </button>
         ) : (
           <div className="space-y-3">
@@ -176,7 +176,7 @@ export default function Create() {
                   >×</button>
                 </div>
               ))}
-              {previews.length < 20 && (
+              {previews.length < 10 && (
                 <button
                   onClick={() => fileRef.current.click()}
                   className="aspect-square border border-dashed border-white/10 rounded-xl
