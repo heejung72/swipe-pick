@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getResults } from '../utils/api.js'
 import { useWebSocket } from '../hooks/useWebSocket.js'
+import { shareResult } from '../utils/kakao.js'
 import confetti from 'canvas-confetti'
 
 export default function Result() {
@@ -28,9 +29,19 @@ export default function Result() {
   }
   useWebSocket(code, handleMessage)
 
+  const handleKakaoShare = () => {
+    if (!data) return
+    shareResult({
+      hostName: data.hostName,
+      beautyScore: data.beautyScore,
+      bestPhotoUrl: data.photos[0]?.url,
+      resultUrl: window.location.href,
+    })
+  }
+
   const copyScore = () => {
     if (!data) return
-    const text = `내 오늘의 미모점수는 ${data.beautyScore}점! 💗 ${data.totalVoters}명이 투표해줬어 스와이프픽에서 확인해봐`
+    const text = `내 오늘의 미모점수는 ${data.beautyScore}점! 💗 ${data.totalVoters}명이 투표해줬어`
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -63,8 +74,8 @@ export default function Result() {
                           bg-pink-500 text-white text-xs font-medium px-3 py-1 rounded-full shadow-lg shadow-pink-500/40">
             👑 베스트컷
           </div>
-          <div className="rounded-2xl overflow-hidden border-2 border-pink-500/50 shadow-xl shadow-pink-500/20">
-            <img src={best.url} className="w-full aspect-[3/4] object-cover" />
+          <div className="rounded-2xl overflow-hidden border-2 border-pink-500/50 shadow-xl shadow-pink-500/20 relative aspect-[3/4] bg-black">
+            <img src={best.url} className="absolute inset-0 w-full h-full object-contain" />
             <div className="bg-neutral-900 px-4 py-3 flex items-center justify-between">
               <div>
                 <div className="text-pink-400 text-lg font-semibold">{best.survivalRate}%</div>
@@ -102,9 +113,21 @@ export default function Result() {
             style={{ width: `${beautyScore}%` }}
           />
         </div>
-        <button onClick={copyScore} className="mt-4 text-xs text-pink-400 hover:text-pink-300 transition-colors">
-          {copied ? '✓ 복사됨!' : '점수 공유하기 →'}
-        </button>
+        <div className="mt-4 flex gap-2 justify-center">
+          <button
+            onClick={handleKakaoShare}
+            className="px-4 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5
+                       active:scale-95 transition-all"
+            style={{ backgroundColor: '#FEE500', color: '#191919' }}
+          >
+            <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
+                 className="w-4 h-4" alt="" />
+            카카오로 공유
+          </button>
+          <button onClick={copyScore} className="px-4 py-2 rounded-xl text-xs border border-white/10 text-white/50 active:scale-95 transition-all">
+            {copied ? '✓ 복사됨!' : '텍스트 복사'}
+          </button>
+        </div>
       </div>
 
       {/* 전체 사진 순위 */}
@@ -114,7 +137,9 @@ export default function Result() {
           {data.photos.map((photo, idx) => (
             <div key={photo.id} className="card-dark p-3 flex gap-3 items-center animate-slide-up">
               <span className="text-white/30 text-sm w-5">{idx + 1}</span>
-              <img src={photo.url} className="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
+              <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 relative bg-black">
+                <img src={photo.url} className="absolute inset-0 w-full h-full object-contain" />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium">{photo.survivalRate}%</span>

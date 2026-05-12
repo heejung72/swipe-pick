@@ -36,8 +36,8 @@ public class RoomController {
         if (files == null || files.length == 0) {
             return ResponseEntity.badRequest().body(Map.of("error", "사진을 업로드해주세요."));
         }
-        if (files.length > 5) {
-            return ResponseEntity.badRequest().body(Map.of("error", "사진은 최대 5장까지 가능해요."));
+        if (files.length > 20) {
+            return ResponseEntity.badRequest().body(Map.of("error", "사진은 최대 20장까지 가능해요."));
         }
 
         try {
@@ -45,7 +45,7 @@ public class RoomController {
             List<Photo> photos = new ArrayList<>();
             for (MultipartFile file : files) {
                 String url = fileService.upload(file);
-                // 로컬 상대경로면 baseUrl 붙이기
+
                 if (url.startsWith("/")) url = baseUrl + url;
                 Photo photo = new Photo();
                 photo.setId(UUID.randomUUID().toString());
@@ -65,7 +65,6 @@ public class RoomController {
         }
     }
 
-    // 방 정보 조회
     @GetMapping("/api/rooms/{code}")
     @ResponseBody
     public ResponseEntity<?> getRoom(@PathVariable String code) {
@@ -88,7 +87,7 @@ public class RoomController {
             "hostName", room.getHostName(),
             "photos", photos,
             "status", room.getStatus(),
-            "totalVoters", room.getTotalVoters(),
+            "totalVoters", roomService.getTotalVoters(code),
             "beautyScore", room.getBeautyScore()
         ));
     }
@@ -105,7 +104,7 @@ public class RoomController {
             "photos", roomService.getPhotoResults(code),
             "bestPhotoId", best != null ? best.getId() : "",
             "beautyScore", room.getBeautyScore(),
-            "totalVoters", room.getTotalVoters(),
+            "totalVoters", roomService.getTotalVoters(code),
             "totalSwipes", room.getTotalSwipes(),
             "hostName", room.getHostName()
         ));

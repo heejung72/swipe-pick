@@ -174,22 +174,48 @@ export default function Swipe() {
         </div>
       </div>
 
-      {/* 댓글 팝업 */}
+      {/* 댓글 팝업 - 흰 말풍선 */}
       {showComment && (
         <div className="mx-4 mb-3 animate-slide-up">
-          <div className="card-dark p-3 flex gap-2">
-            <input
-              autoFocus
-              type="text"
-              value={commentText}
-              onChange={e => setCommentText(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleComment()}
-              placeholder="이 사진에 한마디... (예: 이 사진 대박이야)"
-              maxLength={40}
-              className="flex-1 bg-transparent text-sm outline-none placeholder-white/20"
-            />
-            <button onClick={handleComment} className="text-pink-400 text-sm font-medium">전송</button>
+          <div className="bg-white rounded-2xl rounded-bl-sm shadow-xl p-4">
+            {/* 프리셋 버튼 */}
+            <div className="flex gap-2 mb-3">
+              {['누구세요? 👀', '와 ㄹㅈㄷ 🔥', '진짜 예쁘다 💗', '보정 좀 더해 💇🏻‍♀️'].map(preset => (
+                <button
+                  key={preset}
+                  onClick={() => setCommentText(preset)}
+                  className={`text-xs px-3 py-1.5 rounded-full border transition-all
+                    ${commentText === preset
+                      ? 'bg-pink-500 border-pink-500 text-white'
+                      : 'border-gray-200 text-gray-500 hover:border-pink-300 hover:text-pink-500'
+                    }`}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+            {/* 직접 입력 */}
+            <div className="flex items-center gap-2 border-t border-gray-100 pt-3">
+              <input
+                type="text"
+                value={commentText}
+                onChange={e => setCommentText(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleComment()}
+                placeholder="직접 입력..."
+                maxLength={40}
+                className="flex-1 text-sm text-gray-700 outline-none placeholder-gray-300"
+              />
+              <button
+                onClick={handleComment}
+                disabled={!commentText.trim()}
+                className="text-xs font-medium text-pink-500 disabled:text-gray-300 transition-colors"
+              >
+                전송
+              </button>
+            </div>
           </div>
+          {/* 말풍선 꼬리 */}
+          <div className="w-3 h-3 bg-white ml-4" style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }} />
         </div>
       )}
 

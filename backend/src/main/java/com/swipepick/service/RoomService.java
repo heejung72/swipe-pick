@@ -1,15 +1,20 @@
 package com.swipepick.service;
 
 import com.swipepick.dto.SwipeMessage;
+import com.swipepick.model.Comment;
 import com.swipepick.model.Photo;
 import com.swipepick.model.Room;
+import com.swipepick.model.VoterVote;
+import com.swipepick.repository.PhotoRepository;
+import com.swipepick.repository.RoomRepository;
+import com.swipepick.repository.VoterVoteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -18,23 +23,34 @@ import java.util.stream.Collectors;
 public class RoomService {
 
     private final SimpMessagingTemplate messaging;
-    private final Map<String, Room> rooms = new ConcurrentHashMap<>();
+    private final RoomRepository roomRepository;
+    private final PhotoRepository photoRepository;
+    private final VoterVoteRepository voterVoteRepository;
 
+    @Transactional
     public Room createRoom(String hostName, List<Photo> photos) {
         String code = generateCode();
         Room room = new Room(code, hostName);
+        for (int i = 0; i < photos.size(); i++) {
+            Photo photo = photos.get(i);
+            photo.setRoom(room);
+            photo.setPhotoOrder(i);
+        }
         room.setPhotos(photos);
-        rooms.put(code, room);
+        Room saved = roomRepository.save(room);
         log.info("Room created: {} by {}", code, hostName);
-        return room;
+        return saved;
     }
 
+    @Transactional(readOnly = true)
     public Room getRoom(String code) {
-        return rooms.get(code.toUpperCase());
+        return roomRepository.findByCode(code.toUpperCase()).orElse(null);
     }
 
+    @Transactional
     public SwipeMessage swipe(String roomCode, String photoId, String direction, String voterName) {
-        Room room = rooms.get(roomCode.toUpperCase());
+        String upperCode = roomCode.toUpperCase();
+        Room room = roomRepository.findByCode(upperCode).orElse(null);
         if (room == null) return null;
 
         Photo photo = room.getPhotos().stream()
@@ -42,15 +58,20 @@ public class RoomService {
             .findFirst().orElse(null);
         if (photo == null) return null;
 
-        // 중복 투표 허용 (같은 사람이 여러 사진 투표 가능, 한 사진에 한 번)
-        if (room.hasVoted(voterName, photoId)) return null;
-        room.recordVote(voterName, photoId);
+        if (voterVoteRepository.existsByRoomCodeAndVoterNameAndPhotoId(upperCode, voterName, photoId)) {
+            return null;
+        }
+
+        voterVoteRepository.save(new VoterVote(room, voterName, photoId));
 
         if ("BEST".equals(direction)) {
             photo.setBestCount(photo.getBestCount() + 1);
         } else {
             photo.setWorstCount(photo.getWorstCount() + 1);
         }
+        photoRepository.save(photo);
+
+        int totalVoters = (int) voterVoteRepository.countDistinctVotersByRoomCode(upperCode);
 
         SwipeMessage msg = SwipeMessage.builder()
             .type("SWIPE")
@@ -61,7 +82,7 @@ public class RoomService {
             .survivalRate(photo.getSurvivalRate())
             .voterName(voterName)
             .totalSwipes(room.getTotalSwipes())
-            .totalVoters(room.getTotalVoters())
+            .totalVoters(totalVoters)
             .beautyScore(room.getBeautyScore())
             .build();
 
@@ -69,8 +90,9 @@ public class RoomService {
         return msg;
     }
 
+    @Transactional
     public void addComment(String roomCode, String photoId, String voterName, String text) {
-        Room room = rooms.get(roomCode.toUpperCase());
+        Room room = roomRepository.findByCode(roomCode.toUpperCase()).orElse(null);
         if (room == null) return;
 
         Photo photo = room.getPhotos().stream()
@@ -78,12 +100,14 @@ public class RoomService {
             .findFirst().orElse(null);
         if (photo == null) return;
 
-        Photo.Comment comment = new Photo.Comment();
+        Comment comment = new Comment();
         comment.setId(UUID.randomUUID().toString());
         comment.setVoterName(voterName);
         comment.setText(text);
         comment.setTimestamp(System.currentTimeMillis());
+        comment.setPhoto(photo);
         photo.getComments().add(comment);
+        photoRepository.save(photo);
 
         SwipeMessage msg = SwipeMessage.builder()
             .type("COMMENT")
@@ -96,8 +120,9 @@ public class RoomService {
         messaging.convertAndSend("/topic/room/" + room.getCode(), msg);
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getPhotoResults(String roomCode) {
-        Room room = rooms.get(roomCode.toUpperCase());
+        Room room = roomRepository.findByCode(roomCode.toUpperCase()).orElse(null);
         if (room == null) return List.of();
 
         return room.getPhotos().stream().map(p -> {
@@ -115,12 +140,17 @@ public class RoomService {
         )).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public int getTotalVoters(String roomCode) {
+        return (int) voterVoteRepository.countDistinctVotersByRoomCode(roomCode.toUpperCase());
+    }
+
     private String generateCode() {
         String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         Random rnd = new Random();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 6; i++) sb.append(chars.charAt(rnd.nextInt(chars.length())));
         String code = sb.toString();
-        return rooms.containsKey(code) ? generateCode() : code;
+        return roomRepository.findByCode(code).isPresent() ? generateCode() : code;
     }
 }

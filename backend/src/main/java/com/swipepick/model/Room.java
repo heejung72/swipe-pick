@@ -1,35 +1,40 @@
 package com.swipepick.model;
 
-import lombok.Data;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data
+import java.util.*;
+
+@Entity
+@Table(name = "rooms")
+@Getter @Setter
+@NoArgsConstructor
+@ToString(exclude = "photos")
 public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false, length = 8)
     private String code;
+
+    @Column(nullable = false)
     private String hostName;
-    private List<Photo> photos = new ArrayList<>();
-    private String status = "OPEN"; // OPEN, CLOSED
+
+    @Column(nullable = false)
+    private String status = "OPEN";
+
     private long createdAt = System.currentTimeMillis();
 
-    // voterName → Set<photoId> (중복 투표 방지)
-    private Map<String, Set<String>> voterVotes = new ConcurrentHashMap<>();
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OrderColumn(name = "photo_order")
+    private List<Photo> photos = new ArrayList<>();
 
     public Room(String code, String hostName) {
         this.code = code;
         this.hostName = hostName;
-    }
-
-    public boolean hasVoted(String voterName, String photoId) {
-        return voterVotes.getOrDefault(voterName, Set.of()).contains(photoId);
-    }
-
-    public void recordVote(String voterName, String photoId) {
-        voterVotes.computeIfAbsent(voterName, k -> ConcurrentHashMap.newKeySet()).add(photoId);
-    }
-
-    public int getTotalVoters() {
-        return voterVotes.size();
     }
 
     public int getTotalSwipes() {

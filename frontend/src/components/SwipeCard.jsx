@@ -59,16 +59,19 @@ export default function SwipeCard({ photo, onSwipe, index, isTop }) {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      {/* 사진 */}
+      {/* 검정 배경 */}
+      <div className="absolute inset-0 rounded-3xl bg-black" />
+
+      {/* 메인 이미지 - 비율 유지 */}
       <img
         src={photo.url}
         alt=""
-        className="w-full h-full object-cover rounded-3xl select-none pointer-events-none"
+        className="absolute inset-0 w-full h-full object-contain rounded-3xl select-none pointer-events-none"
         draggable={false}
       />
 
-      {/* 그라디언트 오버레이 */}
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      {/* 하단 그라디언트 */}
+      <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
 
       {/* BEST 오버레이 */}
       {direction === 'BEST' && (

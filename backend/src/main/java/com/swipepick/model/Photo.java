@@ -1,16 +1,37 @@
 package com.swipepick.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Entity
+@Table(name = "photos")
+@Getter @Setter
+@NoArgsConstructor
+@ToString(exclude = {"room", "comments"})
 public class Photo {
+
+    @Id
     private String id;
+
     private String filename;
     private String url;
     private int bestCount = 0;
     private int worstCount = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    @JsonIgnore
+    private Room room;
+
+    @Column(name = "photo_order")
+    private int photoOrder;
+
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OrderBy("timestamp ASC")
     private List<Comment> comments = new ArrayList<>();
 
     public double getSurvivalRate() {
@@ -21,13 +42,5 @@ public class Photo {
 
     public int getTotalVotes() {
         return bestCount + worstCount;
-    }
-
-    @Data
-    public static class Comment {
-        private String id;
-        private String voterName;
-        private String text;
-        private long timestamp;
     }
 }
