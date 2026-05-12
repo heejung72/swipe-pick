@@ -71,6 +71,7 @@ export default function RabbitGame() {
   return (
     <div
       onClick={jump}
+      onTouchStart={(e) => { e.preventDefault(); jump() }}
       className="relative cursor-pointer select-none rounded-xl overflow-hidden"
       style={{
         width: GW, height: GH,
