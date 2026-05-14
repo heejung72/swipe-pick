@@ -134,7 +134,7 @@ export default function Result() {
         >
           <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
                className="w-4 h-4" alt="" />
-          카카오 공유
+          카카오<br/>공유
         </button>
         <button onClick={() => navigate(`/swipe/${code}`)} className="btn-pink flex-1 text-sm">다시 투표</button>
       </div>
