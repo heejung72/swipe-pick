@@ -22,7 +22,7 @@ export function shareSwipeLink({ hostName, photoCount, firstPhotoUrl, swipeUrl }
   window.Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
-      title: `${hostName}의 프사 골라줘 👆`,
+      title: `${hostName}의 사진 골라줘 👆`,
       description: `사진 ${photoCount}장 중 베스트컷 뽑아줘! 스와이프로 5초면 끝`,
       imageUrl: firstPhotoUrl,
       link: {
@@ -52,7 +52,7 @@ export function shareResult({ hostName, beautyScore, bestPhotoUrl, resultUrl }) 
   window.Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
-      title: `${hostName}의 오늘 미모점수는 ${beautyScore}점 💗`,
+      title: `${hostName}의 오늘의 베스트컷 ❤️`,
       description: '스와이프 픽에서 친구들이 직접 뽑은 베스트컷 확인해봐',
       imageUrl: bestPhotoUrl,
       link: {

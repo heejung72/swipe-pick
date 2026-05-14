@@ -12,7 +12,6 @@ export default function Result() {
   const { code } = useParams()
   const navigate = useNavigate()
   const [data, setData] = useState(null)
-  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     getResults(code).then(d => {
@@ -36,18 +35,9 @@ export default function Result() {
     if (!data) return
     shareResult({
       hostName: data.hostName,
-      beautyScore: data.beautyScore,
       bestPhotoUrl: data.photos[0]?.url,
       resultUrl: window.location.href,
     })
-  }
-
-  const copyScore = () => {
-    if (!data) return
-    const text = `내 베스트컷 ${data.beautyScore}점 받았어 💗 ${data.totalVoters}명이 골라줬어`
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   if (!data) {
@@ -59,7 +49,6 @@ export default function Result() {
   }
 
   const best = data.photos[0]
-  const beautyScore = data.beautyScore
 
   return (
     <div className="min-h-screen flex flex-col p-5 max-w-sm mx-auto">
@@ -104,35 +93,6 @@ export default function Result() {
         </div>
       )}
 
-      {/* 베스트컷 점수 */}
-      <div className="card-dark p-5 mb-5 text-center animate-slide-up">
-        <p className="text-white/40 text-xs mb-2">베스트컷 점수</p>
-        <div className="text-5xl font-semibold text-pink-400 mb-1">{beautyScore}<span className="text-2xl text-white/30">점</span></div>
-        <div className="text-white/30 text-xs">{beautyScore >= 80 ? '💗 완전 베스트컷이야!' : beautyScore >= 60 ? '✨ 분위기 맞네!' : '😄 다른 사진도 올려봐!'}</div>
-        {/* 점수 바 */}
-        <div className="mt-3 bg-white/5 rounded-full h-1.5 overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-pink-500 to-pink-300 h-full rounded-full transition-all duration-1000"
-            style={{ width: `${beautyScore}%` }}
-          />
-        </div>
-        <div className="mt-4 flex gap-2 justify-center">
-          <button
-            onClick={handleKakaoShare}
-            className="px-4 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5
-                       active:scale-95 transition-all"
-            style={{ backgroundColor: '#FEE500', color: '#191919' }}
-          >
-            <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
-                 className="w-4 h-4" alt="" />
-            카카오로 공유
-          </button>
-          <button onClick={copyScore} className="px-4 py-2 rounded-xl text-xs border border-white/10 text-white/50 active:scale-95 transition-all">
-            {copied ? '✓ 복사됨!' : '텍스트 복사'}
-          </button>
-        </div>
-      </div>
-
       {/* 전체 사진 순위 */}
       <div className="mb-5">
         <p className="text-white/40 text-xs mb-3">전체 순위</p>
@@ -167,6 +127,15 @@ export default function Result() {
 
       <div className="flex gap-2 pb-8">
         <button onClick={() => navigate('/')} className="btn-outline flex-1 text-sm">처음으로</button>
+        <button
+          onClick={handleKakaoShare}
+          className="flex-1 py-2 rounded-xl text-sm font-medium flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+          style={{ backgroundColor: '#FEE500', color: '#191919' }}
+        >
+          <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
+               className="w-4 h-4" alt="" />
+          카카오 공유
+        </button>
         <button onClick={() => navigate(`/swipe/${code}`)} className="btn-pink flex-1 text-sm">다시 투표</button>
       </div>
     </div>
